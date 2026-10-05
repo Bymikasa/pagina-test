@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a mi Proyecto</title>
+    <!-- Tailwind CSS CDN para un diseño rápido y profesional -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0a0d14',
+                        cardBg: '#121824',
+                        brandPrimary: '#6366f1', // Índigo moderno
+                        brandSecondary: '#a855f7', // Púrpura brillante
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Iconos de Lucide / FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkBg text-gray-100 min-h-screen flex flex-col justify-between selection:bg-brandPrimary selection:text-white">
+
+    <!-- Fondo con efecto de brillo decorativo -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-brandPrimary/20 blur-[140px] rounded-full pointer-events-none -z-10"></div>
+
+    <!-- Navegación -->
+    <header class="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brandPrimary to-brandSecondary flex items-center justify-center shadow-lg shadow-brandPrimary/30">
+                <i class="fa-solid fa-code text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl tracking-wide bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">MiProyecto</span>
+        </div>
+        <nav class="hidden md:flex items-center space-x-8 text-sm text-gray-300">
+            <a href="#inicio" class="hover:text-white transition">Inicio</a>
+            <a href="#caracteristicas" class="hover:text-white transition">Características</a>
+            <a href="#contacto" class="hover:text-white transition">Contacto</a>
+        </nav>
+        <div>
+            <span id="signedInEmail" class="hidden md:inline-block text-sm text-gray-400 mr-4"></span>
+            <button id="signOutButton" type="button" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-sm font-medium transition shadow-sm">
+                Cerrar sesión
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal / Hero Section -->
+    <main class="flex-grow flex items-center justify-center px-6 py-12">
+        <div class="max-w-4xl mx-auto text-center">
+            <p id="authMessage" role="alert" hidden class="mb-6 text-sm text-red-300"></p>
+            
+            <!-- Etiqueta superior opcional -->
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brandPrimary/10 border border-brandPrimary/20 text-brandPrimary text-xs font-semibold mb-8">
+                <span class="w-2 h-2 rounded-full bg-brandPrimary animate-pulse"></span>
+                <span>¡Versión 1.0 disponible!</span>
+            </div>
+
+            <!-- Título Principal -->
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                Construye el futuro con <br>
+                <span class="bg-gradient-to-r from-brandPrimary via-purple-400 to-brandSecondary bg-clip-text text-transparent">código limpio y eficiente</span>
+            </h1>
+
+            <!-- Descripción -->
+            <p class="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10">
+                Bienvenido a este espacio de desarrollo. Aquí encontrarás herramientas rápidas, código optimizado y soluciones pensadas para destacar.
+            </p>
+
+            <!-- Botones de Acción -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="mostrarMensaje()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-brandPrimary to-brandSecondary font-semibold text-white shadow-lg shadow-brandPrimary/25 hover:opacity-95 transition transform hover:-translate-y-0.5">
+                    Comenzar Ahora <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+                <a href="#caracteristicas" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-cardBg hover:bg-cardBg/80 border border-gray-800 font-semibold text-gray-300 transition">
+                    Saber más
+                </a>
+            </div>
+
+            <!-- Tarjetas de características rápidas -->
+            <div id="caracteristicas" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 text-left">
+                <div class="p-6 rounded-2xl bg-cardBg/60 border border-gray-800/80 backdrop-blur-md">
+                    <div class="w-10 h-10 rounded-lg bg-brandPrimary/20 text-brandPrimary flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-bolt text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Ultra Rápido</h3>
+                    <p class="text-gray-400 text-sm">Optimizado al máximo para garantizar la mayor velocidad de carga y rendimiento.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-cardBg/60 border border-gray-800/80 backdrop-blur-md">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-shield-halved text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Seguro y Robusto</h3>
+                    <p class="text-gray-400 text-sm">Construido bajo estándares modernos que aseguran la protección de tus datos.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-cardBg/60 border border-gray-800/80 backdrop-blur-md">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Fácil de Adaptar</h3>
+                    <p class="text-gray-400 text-sm">Estructura modular lista para personalizar y escalar según lo que necesites.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="contacto" class="w-full border-t border-gray-800/60 py-8 text-center text-gray-500 text-sm">
+        <p>© 2026 MiProyecto. Hecho con esfuerzo y dedicación.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
+    <!-- Script sencillo para interactividad -->
+    <script>
+        function mostrarMensaje() {
+            alert("¡Excelente decisión! Vamos a llevar tu proyecto al siguiente nivel.");
+        }
+
+        async function cerrarSesion() {
+            const button = document.getElementById('signOutButton');
+            button.disabled = true;
+            try {
+                const client = createAuthClient();
+                const { error } = await client.auth.signOut();
+                if (error) throw error;
+                window.location.replace('./index.html');
+            } catch (error) {
+                const message = document.getElementById('authMessage');
+                message.textContent = error.message || 'No se pudo cerrar la sesión.';
+                message.hidden = false;
+                button.disabled = false;
+            }
+        }
+
+        function createAuthClient() {
+            const config = window.SUPABASE_CONFIG;
+            if (!config || !config.projectUrl || !config.publishableKey ||
+                config.projectUrl.includes('TU_PROJECT_URL') ||
+                config.publishableKey.includes('TU_PUBLISHABLE_KEY')) {
+                throw new Error('Completa Project URL y Publishable key en supabase-config.js.');
+            }
+            if (!window.supabase) {
+                throw new Error('No se pudo cargar Supabase. Comprueba tu conexión a Internet.');
+            }
+            return window.supabase.createClient(config.projectUrl, config.publishableKey);
+        }
+
+        async function requireSession() {
+            const client = createAuthClient();
+            const { data, error } = await client.auth.getSession();
+            if (error) throw error;
+            if (!data.session) {
+                window.location.replace('./index.html');
+                return;
+            }
+            document.getElementById('signedInEmail').textContent = data.session.user.email || '';
+        }
+
+        document.getElementById('signOutButton').addEventListener('click', cerrarSesion);
+
+        requireSession().catch((error) => {
+            const message = document.getElementById('authMessage');
+            message.textContent = error.message || 'No se pudo comprobar la sesión.';
+            message.hidden = false;
+        });
+    </script>
+</body>
+</html>
