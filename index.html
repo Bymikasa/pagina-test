@@ -172,6 +172,12 @@
             line-height: 1.55;
         }
 
+        .message.success {
+            border-color: #166534;
+            background: #10251b;
+            color: #bbf7d0;
+        }
+
         [hidden] {
             display: none !important;
         }
@@ -231,11 +237,47 @@
             <p id="formMessage" class="message" role="alert" hidden></p>
         </form>
 
-        <p class="footnote">Práctica local: usa solo cuentas y contraseñas ficticias.</p>
+        <p class="footnote">Usa un correo al que tengas acceso; te enviaremos un enlace para verificar tu cuenta.</p>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
     <script>
         let mode = 'login';
+        let authClient = null;
+
+        function showFormMessage(text, isSuccess = false) {
+            const message = document.getElementById('formMessage');
+            message.textContent = text;
+            message.classList.toggle('success', isSuccess);
+            message.hidden = false;
+        }
+
+        function createAuthClient() {
+            const config = window.SUPABASE_CONFIG;
+            if (!config || !config.projectUrl || !config.publishableKey ||
+                config.projectUrl.includes('TU_PROJECT_URL') ||
+                config.publishableKey.includes('TU_PUBLISHABLE_KEY')) {
+                throw new Error('Completa Project URL y Publishable key en supabase-config.js.');
+            }
+            if (!window.supabase) {
+                throw new Error('No se pudo cargar Supabase. Comprueba tu conexión a Internet y recarga la página.');
+            }
+            return window.supabase.createClient(config.projectUrl, config.publishableKey);
+        }
+
+        async function restoreSupabaseSession() {
+            try {
+                authClient = createAuthClient();
+                const { data, error } = await authClient.auth.getSession();
+                if (error) throw error;
+                if (data.session) {
+                    window.location.replace('./doctor_nefarios.html');
+                }
+            } catch (error) {
+                showFormMessage(error.message || 'No se pudo comprobar la sesión.');
+            }
+        }
 
         function setMode(nextMode) {
             mode = nextMode;
@@ -261,6 +303,7 @@
             const message = document.getElementById('formMessage');
             submitButton.disabled = true;
             message.hidden = true;
+            message.classList.remove('success');
 
             const password = document.getElementById('password').value;
             const registering = mode === 'register';
@@ -271,36 +314,42 @@
                 return;
             }
 
-            const payload = {
-                email: document.getElementById('email').value,
-                password
-            };
-            const endpoint = registering ? '/api/register' : '/api/login';
-            if (registering) {
-                payload.displayName = document.getElementById('displayName').value;
-                payload.confirmPassword = document.getElementById('confirmPassword').value;
-            }
-
             try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin',
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || 'No se pudo completar el acceso.');
+                authClient = authClient || createAuthClient();
+                if (registering) {
+                    const { data, error } = await authClient.auth.signUp({
+                        email: document.getElementById('email').value.trim(),
+                        password,
+                        options: {
+                            data: {
+                                display_name: document.getElementById('displayName').value.trim()
+                            },
+                            emailRedirectTo: new URL('./doctor_nefarios.html', window.location.href).href
+                        }
+                    });
+                    if (error) throw error;
+                    if (data.session) {
+                        window.location.replace('./doctor_nefarios.html');
+                        return;
+                    }
+                    showFormMessage('Cuenta creada. Revisa tu correo y abre el enlace de verificación para continuar.', true);
+                    submitButton.disabled = false;
+                    return;
                 }
-                window.location.replace('/welcome');
+
+                const { error } = await authClient.auth.signInWithPassword({
+                    email: document.getElementById('email').value.trim(),
+                    password
+                });
+                if (error) throw error;
+                window.location.replace('./doctor_nefarios.html');
             } catch (error) {
-                message.textContent = error instanceof TypeError
-                    ? 'No se pudo conectar con el servidor local. Comprueba que esté encendido.'
-                    : error.message;
-                message.hidden = false;
+                showFormMessage(error.message || 'No se pudo completar el acceso.');
                 submitButton.disabled = false;
             }
         });
+
+        restoreSupabaseSession();
     </script>
 </body>
 </html>
